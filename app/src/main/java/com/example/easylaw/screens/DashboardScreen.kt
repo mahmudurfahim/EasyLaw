@@ -1,0 +1,20 @@
+package com.example.easylaw.screens
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+
+@Composable
+fun DashboardScreen(role: String) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "Welcome to EasyLaw\nRole: $role",
+            style = MaterialTheme.typography.headlineMedium
+        )
+    }
+}
