@@ -1,99 +1,128 @@
 package com.example.easylaw.screens
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
+
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 
 @Composable
 fun LoginScreen(navController: NavHostController) {
 
-    var email by remember { mutableStateOf("") }
+    var phone by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var selectedRole by remember { mutableStateOf("User") }
     var error by remember { mutableStateOf("") }
+    var passwordVisible by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier.fillMaxSize().padding(20.dp),
-        verticalArrangement = Arrangement.Center
-    ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
-        Text("EasyLaw Login", style = MaterialTheme.typography.headlineMedium)
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { padding ->
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(20.dp)
+                .padding(padding),
+            verticalArrangement = Arrangement.Center
+        ) {
 
-        OutlinedTextField(email, { email = it; error = "" }, label = { Text("Email") }, modifier = Modifier.fillMaxWidth())
+            Text("EasyLaw Login", style = MaterialTheme.typography.headlineMedium)
 
-        Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-        OutlinedTextField(
-            password,
-            { password = it; error = "" },
-            label = { Text("Password") },
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            modifier = Modifier.fillMaxWidth()
-        )
+            OutlinedTextField(
+                value = phone,
+                onValueChange = { phone = it; error = "" },
+                label = { Text("Phone Number") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                modifier = Modifier.fillMaxWidth()
+            )
 
-        Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
-        Text("Login As:")
-
-        Row(modifier = Modifier.fillMaxWidth().clickable { selectedRole = "User" }) {
-            RadioButton(selectedRole == "User", { selectedRole = "User" })
-            Text("User")
-        }
-
-        Row(modifier = Modifier.fillMaxWidth().clickable { selectedRole = "Lawyer" }) {
-            RadioButton(selectedRole == "Lawyer", { selectedRole = "Lawyer" })
-            Text("Lawyer")
-        }
-
-        if (error.isNotEmpty()) {
-            Text(error, color = MaterialTheme.colorScheme.error)
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Button(
-            onClick = {
-                if (email.isBlank() || password.isBlank()) {
-                    error = "Please fill all fields"
-                } else {
-                    navController.navigate("dashboard/$selectedRole") {
-                        popUpTo("login") { inclusive = true }
+            OutlinedTextField(
+                value = password,
+                onValueChange = {
+                    password = it
+                    error = ""
+                },
+                label = { Text("Password") },
+                visualTransformation = if (passwordVisible)
+                    VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(
+                            imageVector = if (passwordVisible)
+                                Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            contentDescription = "Toggle Password"
+                        )
                     }
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            if (error.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(error, color = MaterialTheme.colorScheme.error)
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Button(
+                onClick = {
+                    when {
+                        phone.isBlank() || password.isBlank() -> {
+                            error = "Please fill all fields"
+                        }
+                        !phone.all { it.isDigit() } || phone.length < 10 -> {
+                            error = "Invalid phone number"
+                        }
+                        else -> {
+                            scope.launch {
+                                isLoading = true
+                                delay(1500) // fake loading
+                                isLoading = false
+
+                                snackbarHostState.showSnackbar("Login Successful 🎉")
+
+                                navController.navigate("dashboard/User") {
+                                    popUpTo("login") { inclusive = true }
+                                }
+                            }
+                        }
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !isLoading
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                } else {
+                    Text("Login")
                 }
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Login")
-        }
+            }
 
-        Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-        Button(
-            onClick = {
-                navController.navigate("dashboard/Guest") {
-                    popUpTo("login") { inclusive = true }
-                }
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Continue as Guest")
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        TextButton(onClick = { navController.navigate("register") }) {
-            Text("Don't have an account? Register")
+            TextButton(
+                onClick = { navController.navigate("register") }
+            ) {
+                Text("Don't have an account? Register")
+            }
         }
     }
 }

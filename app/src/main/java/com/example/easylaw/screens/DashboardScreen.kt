@@ -7,13 +7,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun DashboardScreen(role: String) {
+fun DashboardScreen() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "Welcome to EasyLaw\nRole: $role",
+            text = "Welcome to EasyLaw",
             style = MaterialTheme.typography.headlineMedium
         )
     }
