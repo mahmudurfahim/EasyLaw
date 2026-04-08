@@ -99,7 +99,7 @@ fun LoginScreen(navController: NavHostController) {
 
                                 snackbarHostState.showSnackbar("Login Successful 🎉")
 
-                                navController.navigate("dashboard/User") {
+                                navController.navigate("dashboard") {
                                     popUpTo("login") { inclusive = true }
                                 }
                             }
@@ -114,6 +114,14 @@ fun LoginScreen(navController: NavHostController) {
                 } else {
                     Text("Login")
                 }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            TextButton(
+                onClick = { navController.navigate("forgot_password") }
+            ) {
+                Text("Forgot Password?")
             }
 
             Spacer(modifier = Modifier.height(20.dp))

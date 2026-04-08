@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.easylaw.screens.DashboardScreen
+import com.example.easylaw.screens.ForgotPasswordScreen
 import com.example.easylaw.screens.LoginScreen
 import com.example.easylaw.screens.RegisterScreen
 
@@ -26,6 +27,10 @@ fun EasyLawApp() {
         // 📝 Register Screen
         composable("register") {
             RegisterScreen(navController)
+        }
+
+        composable("forgot_password") {
+            ForgotPasswordScreen(navController)
         }
 
         // 🏠 Dashboard (User only, no role)
