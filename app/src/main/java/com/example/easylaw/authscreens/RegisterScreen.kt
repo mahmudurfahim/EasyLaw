@@ -1,4 +1,4 @@
-package com.example.easylaw.screens
+package com.example.easylaw.authscreens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions

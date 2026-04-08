@@ -1,4 +1,4 @@
-package com.example.easylaw.screens
+package com.example.easylaw.authscreens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -14,6 +14,9 @@ import kotlinx.coroutines.launch
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun LoginScreen(navController: NavHostController) {
@@ -39,14 +42,28 @@ fun LoginScreen(navController: NavHostController) {
             verticalArrangement = Arrangement.Center
         ) {
 
-            Text("EasyLaw Login", style = MaterialTheme.typography.headlineMedium)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 24.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "EasyLaw-এ স্বাগতম",
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 28.sp,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                )
+            }
 
             Spacer(modifier = Modifier.height(20.dp))
 
             OutlinedTextField(
                 value = phone,
                 onValueChange = { phone = it; error = "" },
-                label = { Text("Phone Number") },
+                label = { Text("মোবাইল নম্বর") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -59,7 +76,7 @@ fun LoginScreen(navController: NavHostController) {
                     password = it
                     error = ""
                 },
-                label = { Text("Password") },
+                label = { Text("পাসওয়ার্ড") },
                 visualTransformation = if (passwordVisible)
                     VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
@@ -80,16 +97,24 @@ fun LoginScreen(navController: NavHostController) {
                 Text(error, color = MaterialTheme.colorScheme.error)
             }
 
+            TextButton(
+                onClick = { navController.navigate("forgot_password") }
+            ) {
+                Text("পাসওয়ার্ড ভুলে গেছেন?")
+            }
+
             Spacer(modifier = Modifier.height(20.dp))
+
+
 
             Button(
                 onClick = {
                     when {
                         phone.isBlank() || password.isBlank() -> {
-                            error = "Please fill all fields"
+                            error = "সব ঘর পূরণ করুন"
                         }
                         !phone.all { it.isDigit() } || phone.length < 10 -> {
-                            error = "Invalid phone number"
+                            error = "মোবাইল নম্বরটি সঠিক নয়"
                         }
                         else -> {
                             scope.launch {
@@ -97,9 +122,9 @@ fun LoginScreen(navController: NavHostController) {
                                 delay(1500) // fake loading
                                 isLoading = false
 
-                                snackbarHostState.showSnackbar("Login Successful 🎉")
+                                snackbarHostState.showSnackbar("লগইন সফল হয়েছে🎉")
 
-                                navController.navigate("dashboard") {
+                                navController.navigate("BottomNavigation") {
                                     popUpTo("login") { inclusive = true }
                                 }
                             }
@@ -112,24 +137,17 @@ fun LoginScreen(navController: NavHostController) {
                 if (isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(20.dp))
                 } else {
-                    Text("Login")
+                    Text("লগইন")
                 }
             }
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            TextButton(
-                onClick = { navController.navigate("forgot_password") }
-            ) {
-                Text("Forgot Password?")
-            }
-
-            Spacer(modifier = Modifier.height(20.dp))
 
             TextButton(
                 onClick = { navController.navigate("register") }
             ) {
-                Text("Don't have an account? Register")
+                Text("অ্যাকাউন্ট নেই? রেজিস্টার করুন")
             }
         }
     }

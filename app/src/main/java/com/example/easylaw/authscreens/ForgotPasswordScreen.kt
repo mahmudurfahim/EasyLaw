@@ -1,4 +1,4 @@
-package com.example.easylaw.screens
+package com.example.easylaw.authscreens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -39,7 +39,7 @@ fun ForgotPasswordScreen(navController: NavHostController) {
             verticalArrangement = Arrangement.Center
         ) {
 
-            Text("Forgot Password", style = MaterialTheme.typography.headlineMedium)
+            Text("পাসওয়ার্ড পরিবর্তন করুন", style = MaterialTheme.typography.headlineMedium)
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -47,7 +47,7 @@ fun ForgotPasswordScreen(navController: NavHostController) {
             OutlinedTextField(
                 value = phone,
                 onValueChange = { phone = it; error = "" },
-                label = { Text("Phone Number") },
+                label = { Text("মোবাইল নম্বর") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -58,7 +58,7 @@ fun ForgotPasswordScreen(navController: NavHostController) {
             OutlinedTextField(
                 value = newPassword,
                 onValueChange = { newPassword = it; error = "" },
-                label = { Text("New Password") },
+                label = { Text("নতুন পাসওয়ার্ড") },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -74,13 +74,13 @@ fun ForgotPasswordScreen(navController: NavHostController) {
                 onClick = {
                     when {
                         phone.isBlank() || newPassword.isBlank() -> {
-                            error = "Please fill all fields"
+                            error = "সব ঘর পূরণ করুন"
                         }
                         !phone.startsWith("01") || phone.length != 11 || !phone.all { it.isDigit() } -> {
-                            error = "Enter valid phone number (01XXXXXXXXX)"
+                            error = "সঠিক ফোন নম্বর লিখুন (01XXXXXXXXX)"
                         }
                         newPassword.length < 6 -> {
-                            error = "Password must be at least 6 characters"
+                            error = "পাসওয়ার্ড অন্তত ৬ অক্ষরের হতে হবে"
                         }
                         else -> {
                             scope.launch {
@@ -99,7 +99,7 @@ fun ForgotPasswordScreen(navController: NavHostController) {
                 if (isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(20.dp))
                 } else {
-                    Text("Send OTP")
+                    Text("OTP পাঠান")
                 }
             }
 
@@ -108,7 +108,7 @@ fun ForgotPasswordScreen(navController: NavHostController) {
             TextButton(
                 onClick = { navController.popBackStack() }
             ) {
-                Text("Back to Login")
+                Text("লগইনে ফিরে যান")
             }
         }
 
@@ -123,7 +123,7 @@ fun ForgotPasswordScreen(navController: NavHostController) {
                         .padding(20.dp)
                 ) {
 
-                    Text("Enter OTP", style = MaterialTheme.typography.titleLarge)
+                    Text("OTP লিখুন", style = MaterialTheme.typography.titleLarge)
 
                     Spacer(modifier = Modifier.height(10.dp))
 
@@ -153,7 +153,7 @@ fun ForgotPasswordScreen(navController: NavHostController) {
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Verify OTP")
+                        Text("OTP যাচাই করুন")
                     }
                 }
             }
