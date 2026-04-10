@@ -119,7 +119,7 @@ fun LoginScreen(navController: NavHostController) {
                         else -> {
                             scope.launch {
                                 isLoading = true
-                                delay(1500) // fake loading
+                                delay(100) // fake loading
                                 isLoading = false
 
                                 snackbarHostState.showSnackbar("লগইন সফল হয়েছে🎉")
