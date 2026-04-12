@@ -1,5 +1,6 @@
 package com.example.easylaw.navigation
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountBalance
@@ -43,10 +44,8 @@ fun BottomNavigation() {
     val viewModel: HomeViewModel = viewModel()
     val state by viewModel.headlinesState.collectAsStateWithLifecycle()
 
-    // ✅ Tracks which news article to show in detail view
     var selectedNews by remember { mutableStateOf<HeadlineNews?>(null) }
 
-    // ✅ If news is selected, show detail screen — hides bottom nav entirely
     selectedNews?.let { news ->
         NewsDetailScreen(
             news   = news,
@@ -63,6 +62,7 @@ fun BottomNavigation() {
     )
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0),      // ✅ lets ExploreScreen draw behind status bar
         bottomBar = {
             NavigationBar(
                 containerColor = Color.White,
@@ -113,7 +113,7 @@ fun BottomNavigation() {
                 ExploreScreen(
                     englishHeadlines = state.englishHeadlines,
                     banglaHeadlines  = state.banglaHeadlines,
-                    onHeadlineClick  = { selectedNews = it }   // ✅ opens detail
+                    onHeadlineClick  = { selectedNews = it }
                 )
             }
             composable(BottomNavItem.More.route) { MoreScreen() }
