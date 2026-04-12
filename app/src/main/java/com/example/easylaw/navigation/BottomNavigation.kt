@@ -11,11 +11,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.example.easylaw.explorescreens.ExploreScreen
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.easylaw.explorescreens.ExploreScreen
+import com.example.easylaw.explorescreens.HeadlineNews
+import com.example.easylaw.explorescreens.newsheadline.NewsDetailScreen
+import com.example.easylaw.explorescreens.newsheadline.HomeViewModel
 import com.example.easylaw.homescreens.HomeScreen
 import com.example.easylaw.lawyerscreens.LawyerScreen
 import com.example.easylaw.morescreens.MoreScreen
@@ -32,9 +37,23 @@ sealed class BottomNavItem(
 }
 
 @Composable
-fun DashboardWithBottomNav() {
+fun BottomNavigation() {
     val navController = rememberNavController()
-    var selectedItem by remember { mutableStateOf(0) }
+    var selectedItem  by remember { mutableStateOf(0) }
+    val viewModel: HomeViewModel = viewModel()
+    val state by viewModel.headlinesState.collectAsStateWithLifecycle()
+
+    // ✅ Tracks which news article to show in detail view
+    var selectedNews by remember { mutableStateOf<HeadlineNews?>(null) }
+
+    // ✅ If news is selected, show detail screen — hides bottom nav entirely
+    selectedNews?.let { news ->
+        NewsDetailScreen(
+            news   = news,
+            onBack = { selectedNews = null }
+        )
+        return
+    }
 
     val items = listOf(
         BottomNavItem.Home,
@@ -84,14 +103,20 @@ fun DashboardWithBottomNav() {
         }
     ) { innerPadding ->
         NavHost(
-            navController = navController,
+            navController    = navController,
             startDestination = BottomNavItem.Home.route,
-            modifier = Modifier.padding(innerPadding)
+            modifier         = Modifier.padding(innerPadding)
         ) {
             composable(BottomNavItem.Home.route)    { HomeScreen() }
             composable(BottomNavItem.Ainjibi.route) { LawyerScreen() }
-            composable(BottomNavItem.Explore.route) { ExploreScreen() }
-            composable(BottomNavItem.More.route)    { MoreScreen() }
+            composable(BottomNavItem.Explore.route) {
+                ExploreScreen(
+                    englishHeadlines = state.englishHeadlines,
+                    banglaHeadlines  = state.banglaHeadlines,
+                    onHeadlineClick  = { selectedNews = it }   // ✅ opens detail
+                )
+            }
+            composable(BottomNavItem.More.route) { MoreScreen() }
         }
     }
 }

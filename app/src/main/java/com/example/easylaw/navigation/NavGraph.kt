@@ -34,7 +34,7 @@ fun EasyLawApp() {
 
 
         composable("BottomNavigation") {
-            DashboardWithBottomNav()
+            BottomNavigation()
         }
 
     }

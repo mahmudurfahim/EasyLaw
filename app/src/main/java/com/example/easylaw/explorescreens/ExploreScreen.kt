@@ -25,6 +25,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+
+
 // ════════════════════════════════════════════════════════════════════════════
 //  COLORS
 // ════════════════════════════════════════════════════════════════════════════
@@ -43,6 +45,8 @@ private val TextPrimary   = Color(0xFF0D1B2A)
 private val TextSecondary = Color(0xFF5A6A7A)
 private val TextMuted     = Color(0xFF9AAABB)
 private val DividerColor  = Color(0xFFE8EEF4)
+
+
 
 // ════════════════════════════════════════════════════════════════════════════
 //  DATA MODELS
@@ -74,7 +78,8 @@ data class HeadlineNews(
     val title: String,
     val source: String,
     val timeAgo: String,
-    val isBangla: Boolean
+    val isBangla: Boolean,
+    val url: String = ""          // ✅ article URL
 )
 
 data class LawLearnCategory(
@@ -122,13 +127,13 @@ val sampleTrending = listOf(
 )
 
 val sampleEnglishHeadlines = listOf(
-    HeadlineNews("e1", "Bangladesh Supreme Court Issues Landmark Ruling on Digital Rights", "The Daily Star", "3h ago", false),
-    HeadlineNews("e2", "New Anti-Corruption Law Amendments Pass Parliament", "Dhaka Tribune", "6h ago", false),
+    HeadlineNews("e1", "Bangladesh Supreme Court Issues Landmark Ruling on Digital Rights", "The Daily Star", "3h ago", false, "https://www.thedailystar.net"),
+    HeadlineNews("e2", "New Anti-Corruption Law Amendments Pass Parliament", "Dhaka Tribune", "6h ago", false, "https://www.dhakatribune.com"),
 )
 
 val sampleBanglaHeadlines = listOf(
-    HeadlineNews("b1", "উচ্চ আদালতে দুর্নীতি মামলায় নতুন রায়: সম্পদ বাজেয়াপ্তের নির্দেশ", "প্রথম আলো", "৪ ঘণ্টা আগে", true),
-    HeadlineNews("b2", "বাল্যবিবাহ রোধে আইনের কঠোর প্রয়োগের নির্দেশ দিয়েছে হাইকোর্ট", "কালের কণ্ঠ", "৮ ঘণ্টা আগে", true),
+    HeadlineNews("b1", "উচ্চ আদালতে দুর্নীতি মামলায় নতুন রায়: সম্পদ বাজেয়াপ্তের নির্দেশ", "প্রথম আলো", "৪ ঘণ্টা আগে", true, "https://www.prothomalo.com"),
+    HeadlineNews("b2", "বাল্যবিবাহ রোধে আইনের কঠোর প্রয়োগের নির্দেশ দিয়েছে হাইকোর্ট", "কালের কণ্ঠ", "৮ ঘণ্টা আগে", true, "https://www.kalerkantho.com"),
 )
 
 val sampleLawCategories = listOf(
@@ -146,8 +151,8 @@ val sampleLawCategories = listOf(
 @Composable
 fun ExploreScreen(
     trendingNews: List<TrendingNews>         = sampleTrending,
-    englishHeadlines: List<HeadlineNews>     = sampleEnglishHeadlines,
-    banglaHeadlines: List<HeadlineNews>      = sampleBanglaHeadlines,
+    englishHeadlines: List<HeadlineNews>     = emptyList(),
+    banglaHeadlines: List<HeadlineNews>      = emptyList(),
     lawCategories: List<LawLearnCategory>    = sampleLawCategories,
     onTrendingClick: (TrendingNews) -> Unit  = {},
     onHeadlineClick: (HeadlineNews) -> Unit  = {},
@@ -166,7 +171,8 @@ fun ExploreScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Brush.verticalGradient(listOf(BlueDark, BlueAccent)))
-                    .padding(horizontal = 20.dp, vertical = 22.dp)
+                    .statusBarsPadding()
+                    .padding(horizontal = 16.dp, vertical = 14.dp)
             ) {
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -230,7 +236,8 @@ fun ExploreScreen(
                 icon = Icons.Outlined.Newspaper,
                 iconTint = BlueAccent,
                 title = "সাম্প্রতিক সংবাদ",
-                subtitle = "Recent legal headlines"
+                subtitle = if (englishHeadlines.isEmpty() && banglaHeadlines.isEmpty())
+                    "Loading…" else "Recent legal headlines"
             )
         }
 
@@ -498,12 +505,14 @@ fun HeadlineCard(
                 )
             }
             Spacer(Modifier.height(7.dp))
+            // ✅ minLines = 3 fixes the height even for 1-line titles
             Text(
                 text = news.title,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = TextPrimary,
                 maxLines = 3,
+                minLines = 3,
                 overflow = TextOverflow.Ellipsis,
                 lineHeight = 17.sp
             )

@@ -61,4 +61,16 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+
+    //for news headlines
+    // RSS / XML parsing
+    implementation("org.simpleframework:simple-xml:2.7.1") // or use Android's built-in XmlPullParser (no extra dep)
+
+// Retrofit + OkHttp (you likely already have these)
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+// Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 }
